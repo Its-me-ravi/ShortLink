@@ -25,9 +25,15 @@ const createLink = async (req, res) => {
 
     let url = await Url.findOne({ originalUrl });
     if (!url) {
-      url = new Url({ originalUrl, shortCode, expiresAt: expirationDate });
+      url = new Url({
+        originalUrl,
+        shortCode,
+        expiresAt: expirationDate,
+        referrers: new Map(),  // Initialize referrers as an empty Map
+      });
       await url.save();
     }
+    
 
     res.json({ originalUrl: url.originalUrl, shortCode: url.shortCode, expiresAt: url.expiresAt });
   } catch (err) {
@@ -40,6 +46,7 @@ const createLink = async (req, res) => {
 const getURl = async (req, res) => {
   try {
     const { shortCode } = req.params;
+    console.log(shortCode);
     const url = await Url.findOne({ shortCode });
 
     if (!url) {
@@ -71,6 +78,11 @@ const getURl = async (req, res) => {
 
     const existingVisit = await Visit.findOne({ shortCode, ipAddress });
     if (!existingVisit) url.uniqueVisitorCount += 1;
+
+    // Ensure referrers map exists
+    if (!url.referrers) {
+      url.referrers = new Map(); // Initialize referrers if it's undefined
+    }
 
     if (url.referrers.has(referrer)) {
       url.referrers.set(referrer, url.referrers.get(referrer) + 1);
