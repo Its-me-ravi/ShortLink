@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const verifyUser = require("../middlewares/userVerify");
 const linkController = require("../controllers/linkController");
-const loginLimiter = require("../utils/rateLimiter");
+const Limiter = require("../utils/rateLimiter");
 
-router.post("/register", linkController.register);
-router.post("/login", linkController.login);
-router.get("/user", linkController.users);
+router.post("/", linkController.createLink);
+router.get("/:shortCode", Limiter.createLinkLimiter, linkController.getURl);
+router.get("/:shortCode/analytics", linkController.getAnalytics);
+
 
 module.exports = router;

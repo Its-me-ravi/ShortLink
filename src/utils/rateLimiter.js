@@ -1,8 +1,9 @@
 const rateLimit = require('express-rate-limit');
 
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes window
-  max: 10,                   // Allow 10 requests per window
+const createLinkLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: "Too many requests, please try again later."
 });
 
 const globalLimiter = rateLimit({
@@ -10,4 +11,4 @@ const globalLimiter = rateLimit({
   max: 1000,                   // Allow 1000 requests per window
 });
 
-module.exports = loginLimiter;
+module.exports = { createLinkLimiter };
